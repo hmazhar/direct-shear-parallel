@@ -621,8 +621,8 @@ int main(int argc, char* argv[])
 	double particleDensity = 2800*scalingMASS/scalingFactor/scalingFactor/scalingFactor;
 	ShearBox* shearBox;
 	ChSharedPtr<ChBody> cielingSettled;
-	double muWalls = .2;
-	double muParticles = .86;
+	double muWalls = 0;
+	double muParticles = 0;
 	double gravity = -9.81*scalingFactor;
 
 	// apply normal force to cieling
@@ -659,10 +659,14 @@ int main(int argc, char* argv[])
 	//system_gpu->Set_G_acc(ChVector<>(0, gravity, 0));
 	mphysicalSystem->SetStep(timestep);
 
-	((ChLcpSolverParallel*) (mphysicalSystem->GetLcpSolverSpeed()))->SetMaxIteration(max_iteration);
+	//((ChLcpSolverParallel*) (mphysicalSystem->GetLcpSolverSpeed()))->SetMaxIteration(max_iteration);
+	((ChLcpSolverParallel*) (mphysicalSystem->GetLcpSolverSpeed()))->SetMaxIterationNormal(30);
+	((ChLcpSolverParallel*) (mphysicalSystem->GetLcpSolverSpeed()))->SetMaxIterationSliding(60);
+	((ChLcpSolverParallel*) (mphysicalSystem->GetLcpSolverSpeed()))->SetMaxIterationSpinning(0);
+	((ChLcpSolverParallel*) (mphysicalSystem->GetLcpSolverSpeed()))->SetMaxIterationBilateral(100);
 	((ChLcpSolverParallel*) (mphysicalSystem->GetLcpSolverSpeed()))->SetTolerance(tolerance);
 	((ChLcpSolverParallel*) (mphysicalSystem->GetLcpSolverSpeed()))->SetCompliance(0, 0, 0);
-	((ChLcpSolverParallel*) (mphysicalSystem->GetLcpSolverSpeed()))->SetContactRecoverySpeed(300);
+	((ChLcpSolverParallel*) (mphysicalSystem->GetLcpSolverSpeed()))->SetContactRecoverySpeed(50);
 	((ChLcpSolverParallel*) (mphysicalSystem->GetLcpSolverSpeed()))->SetSolverType(ACCELERATED_PROJECTED_GRADIENT_DESCENT);
 
 	((ChCollisionSystemParallel*) (mphysicalSystem->GetCollisionSystem()))->SetCollisionEnvelope(particleRadius * .05);
